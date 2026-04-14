@@ -115,8 +115,8 @@ for target_platform, zig_target, wheel_platform in matrix:
     # First clear the target directory of any stray files
     if os.path.exists(LIBRARY_DIR):
         shutil.rmtree(LIBRARY_DIR)
-    # Compile! Requires ziglang==0.11.0 to be installed
-    subprocess.call(
+    # Compile! Requires ziglang==0.14.0 to be installed
+    subprocess.check_call(
         [
             sys.executable,
             "-m",

@@ -20,7 +20,7 @@ with open(os.path.join(PARENT_DIR, "VERSION"), "r") as f:
 
 
 def compile_library():
-    subprocess.call([sys.executable, "-m", "ziglang", "build", "-Dlib-only=true"], cwd=PARENT_DIR)
+    subprocess.check_call([sys.executable, "-m", "ziglang", "build", "-Dlib-only=true"], cwd=PARENT_DIR)
 
 
 compile_library()
