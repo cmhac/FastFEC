@@ -75,13 +75,19 @@ pub fn build(b: *std.Build) !void {
         b.installArtifact(fastfec_lib);
     } else if (wasm) {
         // Wasm library build step
-        const wasm_target: std.Target.Query = .{ .cpu_arch = .wasm32, .os_tag = .freestanding };
-        const fastfec_wasm = b.addLibrary(.{
-            .name = "fastfec",
-            .linkage = .dynamic,
-            .root_module = createModule(b, b.resolveTargetQuery(wasm_target), optimize),
+        const wasm_target: std.Target.Query = .{ .cpu_arch = .wasm32, .os_tag = .wasi };
+        const wasm_module = b.createModule(.{
+            .target = b.resolveTargetQuery(wasm_target),
+            .optimize = optimize,
+            .link_libc = true,
         });
-        fastfec_wasm.linkLibC();
+        const fastfec_wasm = b.addExecutable(.{
+            .name = "fastfec",
+            .root_module = wasm_module,
+        });
+        fastfec_wasm.rdynamic = true;
+        fastfec_wasm.entry = .disabled;
+        fastfec_wasm.import_symbols = true;
         fastfec_wasm.addCSourceFiles(.{ .files = &libSources, .flags = &buildOptions });
         linkPcre(vendored_pcre, fastfec_wasm);
         fastfec_wasm.addCSourceFile(.{ .file = .{

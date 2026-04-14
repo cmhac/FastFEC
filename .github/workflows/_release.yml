@@ -69,7 +69,7 @@ jobs:
         run: mv zig-out/lib/${{ steps.map.outputs.libName }}.${{ steps.map.outputs.libExt }} libfastfec-${{ matrix.os }}-${{ matrix.architecture }}-${{ inputs.version }}.${{ steps.map.outputs.libExt }}
       - name: Move output library (wasm)
         if: matrix.os == 'wasm'
-        run: mv zig-out/lib/${{ steps.map.outputs.libName }}.${{ steps.map.outputs.libExt }} libfastfec-${{ inputs.version }}.${{ steps.map.outputs.libExt }}
+        run: mv zig-out/bin/${{ steps.map.outputs.libName }}.${{ steps.map.outputs.libExt }} libfastfec-${{ inputs.version }}.${{ steps.map.outputs.libExt }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: matrix.os != 'wasm'
