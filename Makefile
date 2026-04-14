@@ -1,10 +1,6 @@
 SHELL := /bin/zsh
 
-ifneq ("$(wildcard /opt/homebrew/opt/zig@0.14/bin/zig)","")
-ZIG ?= /opt/homebrew/opt/zig@0.14/bin/zig
-else
 ZIG ?= zig
-endif
 
 VENV := python/.venv
 FIXTURE := python/tests/fixtures/13360.fec
@@ -23,7 +19,7 @@ help:
 	@echo "  make all        - Run full verification"
 
 check-zig:
-	@command -v $(ZIG) >/dev/null 2>&1 || (echo "Zig not found. Install with: brew install zig@0.14" && exit 1)
+	@command -v $(ZIG) >/dev/null 2>&1 || (echo "Zig not found. Install with: brew install zig" && exit 1)
 	@$(ZIG) version
 
 build: check-zig

@@ -18,19 +18,13 @@ FastFEC is a C parser for raw `.fec` filings. It has:
 
 ## macOS setup
 
-1. Install Zig (recommended on current macOS):
+1. Install Zig:
 
 ```sh
-brew install zig@0.14
+brew install zig
 ```
 
-2. Use this Zig in shell for the session:
-
-```sh
-export PATH="/opt/homebrew/opt/zig@0.14/bin:$PATH"
-```
-
-3. Verify:
+2. Verify:
 
 ```sh
 zig version
@@ -107,5 +101,5 @@ tox -e py
 
 ## Dependency notes
 
-- The Python package depends on `ziglang==0.11.0` for wheel/build workflows.
-- On newer macOS, using system `zig 0.11.0` directly may fail; building the repo with `zig@0.14` is the practical path.
+- The Python package depends on `ziglang==0.15.2` for wheel/build workflows.
+- Requires Zig >= 0.15.0 (build.zig uses the 0.15 `root_module` API).

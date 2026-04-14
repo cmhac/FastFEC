@@ -18,6 +18,13 @@ pub fn linkPcre(vendored_pcre: bool, libExe: *std.Build.Step.Compile) void {
     }
 }
 
+fn createModule(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) *std.Build.Module {
+    return b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+    });
+}
+
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{
@@ -33,8 +40,7 @@ pub fn build(b: *std.Build) !void {
     if (!lib_only and !wasm) {
         const fastfec_cli = b.addExecutable(.{
             .name = "fastfec",
-            .target = target,
-            .optimize = optimize,
+            .root_module = createModule(b, target, optimize),
         });
 
         fastfec_cli.linkLibC();
@@ -53,11 +59,10 @@ pub fn build(b: *std.Build) !void {
 
     if (!wasm and !skip_lib) {
         // Library build step
-        const fastfec_lib = b.addSharedLibrary(.{
+        const fastfec_lib = b.addLibrary(.{
             .name = "fastfec",
-            .target = target,
-            .optimize = optimize,
-            .version = null,
+            .linkage = .dynamic,
+            .root_module = createModule(b, target, optimize),
         });
         if (fastfec_lib.rootModuleTarget().os.tag.isDarwin()) {
             // useful for package maintainers
@@ -71,11 +76,10 @@ pub fn build(b: *std.Build) !void {
     } else if (wasm) {
         // Wasm library build step
         const wasm_target: std.Target.Query = .{ .cpu_arch = .wasm32, .os_tag = .freestanding };
-        const fastfec_wasm = b.addSharedLibrary(.{
+        const fastfec_wasm = b.addLibrary(.{
             .name = "fastfec",
-            .target = b.resolveTargetQuery(wasm_target),
-            .optimize = optimize,
-            .version = null,
+            .linkage = .dynamic,
+            .root_module = createModule(b, b.resolveTargetQuery(wasm_target), optimize),
         });
         fastfec_wasm.linkLibC();
         fastfec_wasm.addCSourceFiles(.{ .files = &libSources, .flags = &buildOptions });
@@ -92,8 +96,7 @@ pub fn build(b: *std.Build) !void {
         const base_file = std.fs.path.basename(test_file);
         const subtest_exe = b.addExecutable(.{
             .name = base_file,
-            .target = target,
-            .optimize = optimize,
+            .root_module = createModule(b, target, optimize),
         });
         subtest_exe.linkLibC();
         subtest_exe.addCSourceFiles(.{ .files = &testIncludes, .flags = &buildOptions });
