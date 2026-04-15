@@ -4,6 +4,8 @@ const builtin = @import("builtin");
 pub fn linkPcre(vendored_pcre: bool, libExe: *std.Build.Step.Compile) void {
     if (vendored_pcre) {
         libExe.addCSourceFiles(.{ .files = &pcreSources, .flags = &buildOptions });
+        // When vendoring PCRE, define PCRE_STATIC to avoid dllimport on Windows
+        libExe.root_module.addCMacro("PCRE_STATIC", "1");
     } else {
         if (builtin.os.tag == .windows) {
             libExe.linkSystemLibrary("pcre");
